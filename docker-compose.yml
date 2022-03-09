@@ -30,6 +30,20 @@ services:
     ports:
       - 6379:6379
     restart: always
+  mariadb:
+    container_name: mariadb
+    image: mariadb:10.3
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: general
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 6060:80
+    environment:
+      - PMA_ARBITRARY=1
 volumes:
   database-data: # named volumes can be managed easier using docker-compose
 networks:
