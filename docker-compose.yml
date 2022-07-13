@@ -5,12 +5,13 @@ services:
     image: "postgres:12" # use latest official postgres version
     container_name: postgres12
     env_file:
-      - database.env # configure postgres
+      - postgres/database.env # configure postgres
     volumes:
       - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
       - ./sqls/:/home/postgres/databases/ # persist databases
     ports:
       - '5432:5432' # expose port 5432 on host
+    command: ["postgres", "-c", "log_statement=all"] # start postgres with logging enabled
     restart: always
   pgadmin4:
     image: dpage/pgadmin4
@@ -44,6 +45,30 @@ services:
       - 6060:80
     environment:
       - PMA_ARBITRARY=1
+  php7_4:
+    container_name: php7_4
+    build:
+      context: ./php/7_4
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mariadb
+    volumes:
+      - ./php/src:/var/www/html/
+    ports:
+      - 8000:80
+  php5_6:
+    container_name: php5_6
+    build:
+      context: ./php/5_6
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mariadb
+    volumes:
+      - ./php/src:/var/www/html/
+    ports:
+      - 8001:80
 volumes:
   database-data: # named volumes can be managed easier using docker-compose
 networks:
